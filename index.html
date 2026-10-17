@@ -1,0 +1,455 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Faunapedia — Encyclopédie animale</title>
+<style>
+:root {
+  --forest: #183c32;
+  --deep: #102b24;
+  --green: #547b56;
+  --cream: #f5f2e8;
+  --paper: #fffdf6;
+  --gold: #d8b76a;
+  --muted: #777e71;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: #24372d;
+  font-family: Arial, Helvetica, sans-serif;
+}
+header {
+  background: var(--deep);
+  color: white;
+  padding: 22px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+}
+.logo {
+  font-family: Georgia, serif;
+  font-size: 27px;
+  letter-spacing: 1px;
+}
+.logo span { color: var(--gold); }
+header small {
+  color: #c4d0c5;
+  letter-spacing: 2px;
+  font-size: 10px;
+}
+.hero {
+  background: linear-gradient(90deg, #102b24 0%, #183c32ed 48%, #183c3260 100%),
+    url("https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1800&q=85") center 43%/cover;
+  color: white;
+  padding: 75px 7% 70px;
+}
+.eyebrow {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 3px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+h1 {
+  font: normal clamp(38px, 6vw, 68px)/1.05 Georgia, serif;
+  max-width: 650px;
+  margin: 18px 0;
+}
+.hero p {
+  max-width: 480px;
+  line-height: 1.8;
+  color: #e2e9e1;
+}
+.search-wrap {
+  margin-top: 28px;
+  max-width: 540px;
+  display: flex;
+  background: white;
+  border-radius: 5px;
+  padding: 5px;
+}
+.search-wrap input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  padding: 14px;
+  font-size: 15px;
+}
+.search-wrap button {
+  border: 0;
+  background: var(--gold);
+  padding: 0 20px;
+  cursor: pointer;
+  border-radius: 3px;
+  color: #24372d;
+}
+main { max-width: 1250px; margin: auto; padding: 48px 5%; }
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+h2 {
+  font: normal 32px Georgia, serif;
+  margin: 8px 0;
+}
+.intro { color: var(--muted); font-size: 14px; line-height: 1.6; }
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 28px;
+}
+.filter {
+  border: 1px solid #d8dbcf;
+  background: transparent;
+  color: var(--forest);
+  border-radius: 30px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.filter.active, .filter:hover {
+  background: var(--forest);
+  color: white;
+  border-color: var(--forest);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 23px;
+}
+.animal {
+  background: var(--paper);
+  border: 1px solid #e7e4d9;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.animal:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px #183c3215;
+}
+.photo {
+  height: 225px;
+  position: relative;
+  background: #d9dfd2;
+}
+.photo img { width: 100%; height: 100%; object-fit: cover; }
+.tag {
+  position: absolute;
+  top: 13px;
+  left: 13px;
+  background: #102b24e8;
+  color: white;
+  padding: 7px 10px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 2px;
+}
+.animal-body { padding: 20px; }
+.animal h3 {
+  font: normal 25px Georgia, serif;
+  margin: 0 0 5px;
+}
+.scientific {
+  font: italic 14px Georgia, serif;
+  color: var(--muted);
+}
+.stats {
+  display: flex;
+  gap: 20px;
+  padding: 18px 0;
+  margin-top: 10px;
+  border-top: 1px solid #e8e5da;
+}
+.stats div { flex: 1; }
+.stats small {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.stats strong { font-size: 13px; }
+.card-bottom {
+  border-top: 1px solid #e8e5da;
+  padding-top: 14px;
+  color: var(--green);
+  font-size: 12px;
+  font-weight: bold;
+}
+.empty { grid-column: 1/-1; padding: 45px; text-align: center; }
+footer {
+  margin-top: 35px;
+  background: var(--deep);
+  color: #d8e0d8;
+  padding: 35px 6%;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.8;
+}
+footer strong { font: normal 23px Georgia, serif; color: white; }
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  background: #081b16c9;
+  padding: 20px;
+  overflow: auto;
+  align-items: center;
+  justify-content: center;
+}
+.modal.open { display: flex; }
+.modal-content {
+  width: min(700px, 100%);
+  background: var(--paper);
+  border-radius: 7px;
+  overflow: hidden;
+  position: relative;
+}
+.modal-content img { width: 100%; height: 280px; object-fit: cover; }
+.modal-text { padding: 28px; line-height: 1.7; }
+.modal-text h2 { font-size: 36px; }
+.close {
+  position: absolute;
+  right: 13px; top: 13px;
+  width: 38px; height: 38px;
+  border: 0; border-radius: 50%;
+  background: white; font-size: 24px; cursor: pointer;
+}
+@media (max-width: 850px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  header { align-items: flex-start; flex-direction: column; }
+  .hero { padding: 55px 6%; }
+  main { padding: 35px 5%; }
+  .grid { grid-template-columns: 1fr; }
+  .photo { height: 245px; }
+  .section-top { align-items: flex-start; flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">FAUNA<span>PEDIA</span></div>
+    <small>L'ENCYCLOPÉDIE DU MONDE ANIMAL</small>
+  </div>
+  <div style="font-size:12px;color:#d8e0d8">EXPLORER · APPRENDRE · PRÉSERVER</div>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">Le vivant dans toute sa diversité</div>
+  <h1>La nature a mille histoires à raconter.</h1>
+  <p>Explorez le monde animal, des grandes plaines africaines aux forêts les plus mystérieuses. Découvrez les espèces qui peuplent notre planète.</p>
+  <div class="search-wrap">
+    <input id="search" type="search" placeholder="Rechercher un animal..." aria-label="Rechercher un animal">
+    <button id="searchBtn">Rechercher</button>
+  </div>
+</section>
+
+<main>
+  <div class="section-top">
+    <div>
+      <div class="eyebrow" style="color:var(--green)">Le catalogue</div>
+      <h2>Explorer les espèces</h2>
+      <div class="intro">Une première collection à enrichir au fil de tes découvertes.</div>
+    </div>
+    <div class="intro" id="count"></div>
+  </div>
+
+  <div class="filters" id="filters">
+    <button class="filter active" data-category="Tous">Toutes les espèces</button>
+    <button class="filter" data-category="Mammifères">Mammifères</button>
+    <button class="filter" data-category="Oiseaux">Oiseaux</button>
+    <button class="filter" data-category="Reptiles">Reptiles</button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+</main>
+
+<footer>
+  <strong>Faunapedia</strong>
+  <p>Une encyclopédie créée par curiosité, nourrie par la passion du vivant.</p>
+  <span>Projet personnel · Les informations présentées sont des exemples à vérifier.</span>
+</footer>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
+  <div class="modal-content">
+    <button class="close" id="close" aria-label="Fermer">&times;</button>
+    <img id="modalImage" alt="">
+    <div class="modal-text">
+      <div class="eyebrow" id="modalCategory"></div>
+      <h2 id="modalName"></h2>
+      <div class="scientific" id="modalScientific"></div>
+      <p id="modalDescription"></p>
+      <div class="stats">
+        <div><small>Habitat</small><strong id="modalHabitat"></strong></div>
+        <div><small>Alimentation</small><strong id="modalFood"></strong></div>
+      </div>
+      <p class="intro" id="modalConservation"></p>
+    </div>
+  </div>
+</div>
+
+<script>
+const animals = [
+  {
+    name:"Tigre", scientific:"Panthera tigris",
+    category:"Mammifères", habitat:"Forêts et prairies",
+    food:"Carnivore", size:"2,7 m max.",
+    image:"https://images.unsplash.com/photo-1561731216-c3a4d99437d5?auto=format&fit=crop&w=1000&q=85",
+    description:"Le tigre est le plus grand des félins sauvages. Solitaire et puissant, il dépend de vastes territoires pour chasser et se reproduire.",
+    conservation:"Conservation : En danger (EN) selon l'UICN."
+  },
+  {
+    name:"Lion", scientific:"Panthera leo",
+    category:"Mammifères", habitat:"Savanes africaines",
+    food:"Carnivore", size:"250 kg max.",
+    image:"https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=1000&q=85",
+    description:"Le lion est un grand félin social. Il vit généralement en groupes appelés troupes, notamment dans les savanes et les milieux ouverts.",
+    conservation:"Conservation : Vulnérable (VU) selon l'UICN."
+  },
+  {
+    name:"Éléphant d'Afrique", scientific:"Loxodonta africana",
+    category:"Mammifères", habitat:"Savanes et forêts",
+    food:"Herbivore", size:"Jusqu'à 6 tonnes",
+    image:"https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=1000&q=85",
+    description:"L'éléphant d'Afrique est le plus grand animal terrestre actuel. Sa trompe polyvalente lui sert à respirer, saisir des objets et communiquer.",
+    conservation:"Conservation : En danger (EN) selon l'UICN."
+  },
+  {
+    name:"Renard roux", scientific:"Vulpes vulpes",
+    category:"Mammifères", habitat:"Forêts et campagnes",
+    food:"Omnivore", size:"5 à 14 kg",
+    image:"https://images.unsplash.com/photo-1474511320723-9a56873867b5?auto=format&fit=crop&w=1000&q=85",
+    description:"Le renard roux est un canidé adaptable présent dans de nombreux milieux. Son régime varié lui permet de vivre aussi près des villes.",
+    conservation:"Conservation : Préoccupation mineure (LC) selon l'UICN."
+  },
+  {
+    name:"Aigle royal", scientific:"Aquila chrysaetos",
+    category:"Oiseaux", habitat:"Montagnes et falaises",
+    food:"Carnivore", size:"Envergure : 2,3 m",
+    image:"https://images.unsplash.com/photo-1611689342806-0863700ce1e4?auto=format&fit=crop&w=1000&q=85",
+    description:"Ce grand rapace est connu pour sa vue perçante et son vol puissant. Il niche souvent sur des falaises ou dans de grands arbres.",
+    conservation:"Conservation : Préoccupation mineure (LC) à l'échelle mondiale."
+  },
+  {
+    name:"Iguane vert", scientific:"Iguana iguana",
+    category:"Reptiles", habitat:"Forêts tropicales",
+    food:"Principalement herbivore", size:"Jusqu'à 2 m",
+    image:"https://images.unsplash.com/photo-1610050719984-7a1f7e5c8d6c?auto=format&fit=crop&w=1000&q=85",
+    description:"L'iguane vert est un grand lézard arboricole des régions tropicales d'Amérique. Il se chauffe au soleil et se nourrit surtout de végétaux.",
+    conservation:"Le statut de conservation doit être vérifié pour l'espèce et la population concernées."
+  }
+];
+
+const grid = document.getElementById("grid");
+const search = document.getElementById("search");
+let category = "Tous";
+
+function render() {
+  const term = search.value.trim().toLocaleLowerCase("fr");
+  const results = animals.filter(a =>
+    (category === "Tous" || a.category === category) &&
+    (a.name.toLocaleLowerCase("fr").includes(term) ||
+     a.scientific.toLowerCase().includes(term) ||
+     a.habitat.toLocaleLowerCase("fr").includes(term))
+  );
+
+  document.getElementById("count").textContent =
+    results.length + (results.length > 1 ? " espèces affichées" : " espèce affichée");
+
+  grid.innerHTML = "";
+
+  if (!results.length) {
+    grid.innerHTML = '<div class="empty">Aucun animal trouvé. Essaie un autre nom ou une autre catégorie.</div>';
+    return;
+  }
+
+  results.forEach(a => {
+    const card = document.createElement("article");
+    card.className = "animal";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+    card.setAttribute("aria-label", "Découvrir " + a.name);
+    card.innerHTML = `
+      <div class="photo">
+        <img src="${a.image}" alt="${a.name}" loading="lazy">
+        <span class="tag">${a.category}</span>
+      </div>
+      <div class="animal-body">
+        <h3>${a.name}</h3>
+        <div class="scientific">${a.scientific}</div>
+        <div class="stats">
+          <div><small>Habitat</small><strong>${a.habitat}</strong></div>
+          <div><small>Alimentation</small><strong>${a.food}</strong></div>
+        </div>
+        <div class="card-bottom">CONSULTER LA FICHE &nbsp; →</div>
+      </div>`;
+    card.addEventListener("click", () => openAnimal(a));
+    card.addEventListener("keydown", e => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        openAnimal(a);
+      }
+    });
+    grid.appendChild(card);
+  });
+}
+
+function openAnimal(a) {
+  document.getElementById("modalImage").src = a.image;
+  document.getElementById("modalImage").alt = a.name;
+  document.getElementById("modalCategory").textContent = a.category;
+  document.getElementById("modalName").textContent = a.name;
+  document.getElementById("modalScientific").textContent = a.scientific;
+  document.getElementById("modalDescription").textContent = a.description;
+  document.getElementById("modalHabitat").textContent = a.habitat;
+  document.getElementById("modalFood").textContent = a.food;
+  document.getElementById("modalConservation").textContent = a.conservation;
+  document.getElementById("modal").classList.add("open");
+  document.getElementById("close").focus();
+}
+
+function closeModal() {
+  document.getElementById("modal").classList.remove("open");
+}
+
+search.addEventListener("input", render);
+document.getElementById("searchBtn").addEventListener("click", render);
+document.querySelectorAll(".filter").forEach(btn => {
+  btn.addEventListener("click", () => {
+    category = btn.dataset.category;
+    document.querySelectorAll(".filter").forEach(b =>
+      b.classList.toggle("active", b === btn)
+    );
+    render();
+  });
+});
+document.getElementById("close").addEventListener("click", closeModal);
+document.getElementById("modal").addEventListener("click", e => {
+  if (e.target.id === "modal") closeModal();
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape") closeModal();
+});
+
+render();
+</script>
+</body>
+</html>
